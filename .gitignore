@@ -6,11 +6,17 @@ npm-debug.log*
 # Dependency directory
 node_modules
 
-#Переменные окружения
+# Переменные окружения
 *.env
 
 # Optional npm cache directory
 .npm
+
+# Заметки
+notes.md
+
+# Загружаемые картинки
+images
 
 # Optional REPL history
 .DS_Store

@@ -1,42 +1,32 @@
 const Place = require('../models/place');
-const InvalidData = require('../errors/invalid-data-err').default;
-const NotFound = require('../errors/not-found-err').default;
-
+const InvalidData = require('../errors/invalid-data-err');
+const NotFound = require('../errors/not-found-err');
+const path = require('path');
 // получение всех мест
 const getPlaces = (req, res, next) => {
-    Place.find({})
-    .then((places) => res.send(places))
-    .catch(next);
+    // const {cityId} = req.body;
+    // Place.find({ cityId: cityId })
+    // .then((places) => res.send(places))
+    // .catch(next);
+    res.status(200).sendFile('qwqwq-wow-.jpg', {
+        root: './images/'
+    });
 }
 
 // создание места
 const createPlace = (req, res, next) => {
-    const { 
-        cityId,
-        name,
-        description,
-        photo,
-        address,
-        timeFrom,
-        timeTo
-     } = req.body;
-    
-    Place.create({
-        cityId,
-        name,
-        description,
-        photo,
-        address,
-        timeFrom,
-        timeTo
+    const { name } = req.body;
+    Place.create({ name })
+    .then((place) => {
+        res.status(201).send(place);
     })
-    .then((place) => res.send(place))
     .catch((err) => {
         if (err.name === 'ValidationError') {
             next(new InvalidData('Invalid Data'))
         } else {
             next(err);
         }
+        next(err);
     });
 };
 
