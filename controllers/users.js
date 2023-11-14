@@ -5,7 +5,8 @@ const Duplicate = require('../errors/duplicate-err');
 const InvalidAuth = require('../errors/invalid-auth-err');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
+const path = require('path');
+const fs = require('fs');
 const MONGODB_ERROR = 11000;
 
 // регистрация
@@ -15,11 +16,14 @@ const signup = (req, res, next) => {
     .then((hash) => User.create({
         username, name, email, password: hash,
     }))
-    .then((user) => res.status(201).send({
-        name: user.name,
-        email: user.email,
-        _id: user._id,
-    }))
+    .then((user) => {
+        fs.mkdir(`./users/${user._id}`, (error) => console.log(error));
+        res.status(201).send({
+            name: user.name,
+            email: user.email,
+            _id: user._id,
+        });
+    })
     .catch((err) => {
         if (err.code === MONGODB_ERROR) {
             next(new Duplicate('Такая почта уже существует'));
@@ -58,19 +62,20 @@ const signin = (req, res, next) => {
 
 // обновить профиль
 const updateInfo = (req, res, next) => {
-    const {username, name, email} = req.body;
-    User.findByIdAndUpdate(req.user._id, {username, name, email}, { returnDocument: 'after' })
-    .orFail(() => {
-        throw new NotFound('Пользователь не найден');
-    })
-    .then((user) => res.status(200).send(user))
-    .catch((err) => {
-        if (err.code === MONGODB_ERROR) {
-            next(new Duplicate('Такая почта уже существует'));
-        } else {
-            next(err);
-        }
-    });
+    // const {username, name, email} = req.body;
+    // User.findByIdAndUpdate(req.user._id, {username, name, email}, { returnDocument: 'after' })
+    // .orFail(() => {
+    //     throw new NotFound('Пользователь не найден');
+    // })
+    // .then((user) => res.status(200).send(user))
+    // .catch((err) => {
+    //     if (err.code === MONGODB_ERROR) {
+    //         next(new Duplicate('Такая почта уже существует'));
+    //     } else {
+    //         next(err);
+    //     }
+    // });
+
 }
 
 // const getInfo = (userId, res, next) => {
@@ -89,4 +94,5 @@ const updateInfo = (req, res, next) => {
 module.exports = {
     signup,
     signin,
+    updateInfo
 }

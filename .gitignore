@@ -18,6 +18,9 @@ notes.md
 # Загружаемые картинки
 images
 
+# Загружаемые аватарки
+users
+
 # Optional REPL history
 .DS_Store
 .idea
