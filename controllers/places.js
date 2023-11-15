@@ -2,14 +2,11 @@ const Place = require('../models/place');
 const InvalidData = require('../errors/invalid-data-err');
 const NotFound = require('../errors/not-found-err');
 const path = require('path');
+
 // получение всех мест
 const getPlaces = (req, res, next) => {
-    // const {cityId} = req.body;
-    // Place.find({ cityId: cityId })
-    // .then((places) => res.send(places))
-    // .catch(next);
-    res.status(200).sendFile('qwqwq-wow-.jpg', {
-        root: './images/'
+    res.status(200).sendFile(req.params.imgId, {
+        root: './upload/places/'
     });
 }
 

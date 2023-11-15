@@ -53,7 +53,8 @@ const signin = (req, res, next) => {
         .send({
             username: user.username,
             name: user.name,
-            email: user.email
+            email: user.email,
+            _id: user._id
         });
     })
     .catch(next);
@@ -77,14 +78,20 @@ const updateInfo = (req, res, next) => {
 
 }
 
-// const getInfo = (userId, res, next) => {
-//     User.findById({ _id: userId })
-//     .orFail(() => {
-//         throw new NotFound('Пользователь не найден');
-//     })
-//     .then((user) => res.status(200). send(user))
-//     .catch(next);
-// }
+const getInfo = (req, res, next) => {
+    User.findById({ _id: req.params.userId })
+    .orFail(() => {
+        throw new NotFound('Пользователь не найден');
+    })
+    .then((user) => res.status(200).send(user))
+    .catch(next);
+}
+
+const getAvatar = (req, res, next) => {
+    res.status(200).sendFile(req.params.imgId, {
+        root: './upload/users/'
+    });
+}
 
 // const getInfoParams = (req, res, next) => {
 //     getInfo(req.params)
@@ -93,5 +100,7 @@ const updateInfo = (req, res, next) => {
 module.exports = {
     signup,
     signin,
-    updateInfo
+    updateInfo,
+    getInfo,
+    getAvatar,
 }
