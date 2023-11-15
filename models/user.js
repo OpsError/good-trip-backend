@@ -5,6 +5,7 @@ const userSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true,
+        unique: true,
     },
     name: {
         type: String,
@@ -13,6 +14,7 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
+        unique: true,
         validate: {
             validator(email) {
                 return validatorLib.isEmail(email);
@@ -21,6 +23,10 @@ const userSchema = new mongoose.Schema({
         }
     },
     password: {
+        type: String,
+        required: true,
+    },
+    photo: {
         type: String,
         required: true,
     },

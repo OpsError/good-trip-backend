@@ -14,16 +14,15 @@ const signup = (req, res, next) => {
     const {username, name, email, password} = req.body;
     bcrypt.hash(password, 10)
     .then((hash) => User.create({
-        username, name, email, password: hash,
+        username, name, email, password: hash, photo: 'default-avatar.jpg'
     }))
-    .then((user) => {
-        fs.mkdir(`./users/${user._id}`, (error) => console.log(error));
+    .then((user) =>
         res.status(201).send({
             name: user.name,
             email: user.email,
             _id: user._id,
-        });
-    })
+        })
+    )
     .catch((err) => {
         if (err.code === MONGODB_ERROR) {
             next(new Duplicate('Такая почта уже существует'));

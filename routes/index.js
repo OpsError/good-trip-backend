@@ -3,12 +3,28 @@ const { validatePlaceBody, validatePlaceParams } = require('../middlewares/valid
 const { getPlaces, createPlace, deletePlace } = require('../controllers/places');
 const { signup, signin, updateInfo } = require('../controllers/users');
 const {uploadImage} = require('../middlewares/upload');
+const auth = require('../middlewares/auth');
+const randomId = require('random-id');
+
+const userConfig = {
+    name: randomId(30, 'aA0'),
+    path: 'upload/users'
+}
+
+const placeConfig = {
+    name: randomId(30, 'aA0'),
+    path: 'upload/places'
+}
 
 router.get('/', getPlaces);
-router.post('/', uploadImage('place').single('photo'), createPlace);
-router.delete('/:placeId', validatePlaceParams, deletePlace);
+
+router.post('/', auth, uploadImage(placeConfig).single('photo'), createPlace);
+
+router.delete('/:placeId', auth, validatePlaceParams, deletePlace);
+
+router.patch('/user', auth, uploadImage(userConfig).single('photo'), updateInfo);
+
 router.post('/signin', signin);
 router.post('/signup', signup);
-router.patch('/user', uploadImage('avatar').single('photo'), updateInfo);
 
 module.exports = router;

@@ -15,8 +15,13 @@ const getPlaces = (req, res, next) => {
 
 // создание места
 const createPlace = (req, res, next) => {
-    const { name } = req.body;
-    Place.create({ name })
+    const {
+        cityId, name, description, address, photo
+    } = req.body;
+    
+    Place.create({
+        cityId, name, description, address, photo
+    })
     .then((place) => {
         res.status(201).send(place);
     })

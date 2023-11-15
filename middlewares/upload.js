@@ -1,13 +1,14 @@
 const multer = require('multer');
 const path = require('path');
 
-const uploadImage = (namePhoto) => {
+const uploadImage = (config) => {
     let storage = multer.diskStorage({
         destination: (req, file, cb) => {
-            cb(null, 'images');
+            cb(null, config.path);
         },
         filename: (req, file, cb) => {
-            const uniqueName = `${namePhoto}` + Math.round(Math.random() * 1E9) + path.extname(file.originalname);
+            const uniqueName = `${config.name}` + path.extname(file.originalname);
+            req.body.photo = uniqueName;
             cb(null, uniqueName);
         }
     });

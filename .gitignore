@@ -16,10 +16,7 @@ node_modules
 notes.md
 
 # Загружаемые картинки
-images
-
-# Загружаемые аватарки
-users
+upload
 
 # Optional REPL history
 .DS_Store
