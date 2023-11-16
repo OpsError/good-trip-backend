@@ -5,8 +5,7 @@ const Duplicate = require('../errors/duplicate-err');
 const InvalidAuth = require('../errors/invalid-auth-err');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const path = require('path');
-const fs = require('fs');
+
 const MONGODB_ERROR = 11000;
 
 // регистрация
@@ -62,20 +61,28 @@ const signin = (req, res, next) => {
 
 // обновить профиль
 const updateInfo = (req, res, next) => {
-    // const {username, name, email} = req.body;
-    // User.findByIdAndUpdate(req.user._id, {username, name, email}, { returnDocument: 'after' })
-    // .orFail(() => {
-    //     throw new NotFound('Пользователь не найден');
-    // })
-    // .then((user) => res.status(200).send(user))
-    // .catch((err) => {
-    //     if (err.code === MONGODB_ERROR) {
-    //         next(new Duplicate('Такая почта уже существует'));
-    //     } else {
-    //         next(err);
-    //     }
-    // });
+    const { username, name, email, photo } = req.body;
 
+    User.findById(req.user._id)
+    .orFail(() => {
+        throw new NotFound('Пользователь не найден');
+    })
+    .then((user) => {
+        fs.unlink(`./upload/users/${user.photo}`, (err) => {
+            if (err) {
+                console.log(err);
+            }
+        });
+        User.updateOne(req.user._id, { username, name, email, photo }, { returnDocument: 'after' })
+        .then((user) => res.status(200).send(user))
+        .catch((err) => {
+            if (err.code === MONGODB_ERROR) {
+                next(new Duplicate('Такая почта уже существует'));
+            } else {
+                next(err);
+            }
+        })
+    })
 }
 
 const getInfo = (req, res, next) => {
@@ -83,7 +90,11 @@ const getInfo = (req, res, next) => {
     .orFail(() => {
         throw new NotFound('Пользователь не найден');
     })
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.status(200).send({
+        username: user.username,
+        name: user.name,
+        photo: user.photo,
+    }))
     .catch(next);
 }
 
@@ -92,10 +103,6 @@ const getAvatar = (req, res, next) => {
         root: './upload/users/'
     });
 }
-
-// const getInfoParams = (req, res, next) => {
-//     getInfo(req.params)
-// }
 
 module.exports = {
     signup,
