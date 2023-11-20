@@ -3,6 +3,7 @@ const InvalidData = require('../errors/invalid-data-err');
 const NotFound = require('../errors/not-found-err');
 const Duplicate = require('../errors/duplicate-err');
 const InvalidAuth = require('../errors/invalid-auth-err');
+const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -68,21 +69,32 @@ const updateInfo = (req, res, next) => {
         throw new NotFound('Пользователь не найден');
     })
     .then((user) => {
-        fs.unlink(`./upload/users/${user.photo}`, (err) => {
-            if (err) {
-                console.log(err);
-            }
-        });
-        User.updateOne(req.user._id, { username, name, email, photo }, { returnDocument: 'after' })
+        if (!(user._id.toString() === req.user._id)) {
+            console.log(user._id.toString(), req.user._id)
+            throw next(new AccessError('Нет прав доступа'));
+        }
+        if (user.photo !== 'default-avatar.jpg') {
+            fs.unlink(`./upload/users/${user.photo}`, (err) => {
+                if (err) {
+                    console.log(err);
+                }
+            });
+        }
+        // console.log(req.body.photo, user.photo);
+        User.findByIdAndUpdate(req.user._id, { username, name, email, photo }, { returnDocument: 'after' })
+        .orFail(() => {
+        throw new NotFound('User Not Found');
+        })
         .then((user) => res.status(200).send(user))
         .catch((err) => {
-            if (err.code === MONGODB_ERROR) {
-                next(new Duplicate('Такая почта уже существует'));
-            } else {
-                next(err);
-            }
-        })
+        if (err.code === MONGODB_ERROR) {
+            next(new Duplicate('Такая почта уже существует'));
+        } else {
+            next(err);
+        }
+        });
     })
+    .catch(next);
 }
 
 const getInfo = (req, res, next) => {

@@ -1,11 +1,9 @@
 const router = require('express').Router();
-const randomId = require('random-id');
 const auth = require('../middlewares/auth');
 const { updateInfo, getInfo } = require('../controllers/users');
 const { uploadImage } = require('../middlewares/upload');
 
 const userConfig = {
-    name: randomId(30, 'aA0'),
     path: 'upload/users'
 }
 

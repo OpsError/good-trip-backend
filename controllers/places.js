@@ -1,7 +1,8 @@
 const Place = require('../models/place');
 const InvalidData = require('../errors/invalid-data-err');
 const NotFound = require('../errors/not-found-err');
-const path = require('path');
+const AccessError = require('../errors/access-err')
+const fs = require('fs');
 
 // получение всех мест
 const getPlaces = (req, res, next) => {
@@ -15,9 +16,8 @@ const createPlace = (req, res, next) => {
     const {
         cityId, name, description, address, photo
     } = req.body;
-    
     Place.create({
-        cityId, name, description, address, photo
+        cityId, name, description, address, photo, owner: req.user._id
     })
     .then((place) => {
         res.status(201).send(place);
@@ -32,13 +32,24 @@ const createPlace = (req, res, next) => {
     });
 };
 
-// удаление мероприятия
+// удаление
 const deletePlace = (req, res, next) => {
-    Place.deleteOne({ _id: req.params.placeId })
-    .orFail(() => {
-        throw new NotFound('Place Not Found');
+    Place.findById({ _id: req.params.placeId })
+    .orFail(() => { throw new NotFound('Карточка не найдена') })
+    .then((place) => {
+        if (!(place.owner.toString() === req.user._id)) {
+            throw next(new AccessError('Нет прав доступа'));
+        }
+        fs.unlink(`./upload/places/${place.photo}`, (err) => {
+            if (err) {
+                console.log(err)
+            }
+        });
+
+        Place.deleteOne({ _id: req.params.placeId })
+        .then(res.status(200).send({ message: 'Карточка удалена' }))
+        .catch(next);
     })
-    .then(() => res.send({ message: 'Place Removed' }))
     .catch(next);
 }
 

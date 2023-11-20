@@ -7,7 +7,7 @@ const getCities = (req, res, next) => {
 }
 
 const createCity = (req, res, next) => {
-    City.createCity({ name: req.name })
+    City.create(req.body)
     .then((city) => res.status(201).send(city))
     .catch(next);
 }
