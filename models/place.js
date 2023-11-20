@@ -4,7 +4,7 @@ const validatorLib = require('validator');
 const placeSchema = new mongoose.Schema({
     // id города
     cityId: {
-        type: Number,
+        type: mongoose.Schema.Types.ObjectId,
         required: true,
     },
     // название места
