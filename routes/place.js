@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const auth = require('../middlewares/auth');
 const { createPlace, deletePlace } = require('../controllers/places');
-const { validatePlaceBody, validatePlaceParams } = require('../middlewares/validate');
+const { validateBodyCreatePlace, validateParamsDeletePlace } = require('../middlewares/validate');
 const { uploadImage } = require('../middlewares/upload');
 
 const placeConfig = {
@@ -9,9 +9,9 @@ const placeConfig = {
 }
 
 // создание карточки
-router.post('/', auth, uploadImage(placeConfig).single('photo'), createPlace);
+router.post('/', auth, uploadImage(placeConfig).single('photo'), validateBodyCreatePlace,createPlace);
 
 // удаление карточки
-router.delete('/:placeId', auth, validatePlaceParams, deletePlace);
+router.delete('/:placeId', auth, validateParamsDeletePlace, deletePlace);
 
 module.exports = router;

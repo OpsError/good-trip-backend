@@ -14,7 +14,7 @@ const signup = (req, res, next) => {
     const {username, name, email, password} = req.body;
     bcrypt.hash(password, 10)
     .then((hash) => User.create({
-        username, name, email, password: hash, photo: 'default-avatar.jpg'
+        username, name, email, password: hash, photo: 'avatar.jpg'
     }))
     .then((user) =>
         res.status(201).send({
@@ -80,7 +80,6 @@ const updateInfo = (req, res, next) => {
                 }
             });
         }
-        // console.log(req.body.photo, user.photo);
         User.findByIdAndUpdate(req.user._id, { username, name, email, photo }, { returnDocument: 'after' })
         .orFail(() => {
         throw new NotFound('User Not Found');

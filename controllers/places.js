@@ -1,4 +1,5 @@
 const Place = require('../models/place');
+const City = require('../models/city');
 const InvalidData = require('../errors/invalid-data-err');
 const NotFound = require('../errors/not-found-err');
 const AccessError = require('../errors/access-err')
@@ -16,20 +17,26 @@ const createPlace = (req, res, next) => {
     const {
         cityId, name, description, address, photo
     } = req.body;
-    Place.create({
-        cityId, name, description, address, photo, owner: req.user._id
-    })
-    .then((place) => {
-        res.status(201).send(place);
-    })
-    .catch((err) => {
-        if (err.name === 'ValidationError') {
-            next(new InvalidData('Invalid Data'))
-        } else {
+
+    City.findById(cityId)
+    .orFail(() => { throw new InvalidData('Невернные данные') })
+    .then(() => {
+        Place.create({
+            cityId, name, description, address, photo, owner: req.user._id
+        })
+        .then((place) => {
+            res.status(201).send(place);
+        })
+        .catch((err) => {
+            if (err.name === 'ValidationError') {
+                next(new InvalidData('Invalid Data'))
+            } else {
+                next(err);
+            }
             next(err);
-        }
-        next(err);
-    });
+        });
+    })
+    .catch(next);
 };
 
 // удаление
