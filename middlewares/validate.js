@@ -30,7 +30,6 @@ const validateBodySignup = celebrate({
         name: Joi.string().min(2).max(20).required(),
         email: Joi.string().min(5).email().required(),
         password: Joi.string().min(3).max(25).required().regex(passwordPattern),
-        photo: Joi.string().regex(imagePattern).required(),
     }),
 });
 // валидация при авторизации
@@ -51,7 +50,7 @@ const validateBodyPatchInfo = celebrate({
 });
 // get info
 const validateParamsGetInfo = celebrate({
-    params: Joi.object.keys({
+    params: Joi.object().keys({
         userId: Joi.objectId(),
     }),
 });

@@ -6,6 +6,7 @@ const InvalidAuth = require('../errors/invalid-auth-err');
 const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { uploadImage } = require('../middlewares/upload');
 
 const MONGODB_ERROR = 11000;
 
@@ -16,13 +17,7 @@ const signup = (req, res, next) => {
     .then((hash) => User.create({
         username, name, email, password: hash, photo: 'avatar.jpg'
     }))
-    .then((user) =>
-        res.status(201).send({
-            name: user.name,
-            email: user.email,
-            _id: user._id,
-        })
-    )
+    .then((user) => res.status(201).send(user))
     .catch((err) => {
         if (err.code === MONGODB_ERROR) {
             next(new Duplicate('Такая почта уже существует'));
@@ -54,6 +49,7 @@ const signin = (req, res, next) => {
             username: user.username,
             name: user.name,
             email: user.email,
+            photo: user.photo,
             _id: user._id
         });
     })
@@ -73,24 +69,33 @@ const updateInfo = (req, res, next) => {
             console.log(user._id.toString(), req.user._id)
             throw next(new AccessError('Нет прав доступа'));
         }
-        if (user.photo !== 'default-avatar.jpg') {
-            fs.unlink(`./upload/users/${user.photo}`, (err) => {
-                if (err) {
-                    console.log(err);
-                }
-            });
-        }
         User.findByIdAndUpdate(req.user._id, { username, name, email, photo }, { returnDocument: 'after' })
         .orFail(() => {
         throw new NotFound('User Not Found');
         })
-        .then((user) => res.status(200).send(user))
+        .then((newUser) => {
+            if (user.photo !== 'avatar.jpg') {
+                fs.unlink(`./upload/users/${user.photo}`, (err) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+            }
+            res.status(200).send(newUser);
+        })
         .catch((err) => {
         if (err.code === MONGODB_ERROR) {
             next(new Duplicate('Такая почта уже существует'));
         } else {
             next(err);
         }
+        // на случай, если в запросе будет username или email,
+        // который уже существует в бд
+        fs.unlink(`./upload/users/${req.body.photo}`, (err) => {
+            if (err) {
+                console.log(err);
+            }
+        });
         });
     })
     .catch(next);
