@@ -6,59 +6,84 @@ const usernamePattern = /[\w]*/;
 const imagePattern = /[\w]*\.[png | jpg | jpeg | svg | webp]/;
 const passwordPattern = /[[\w]*[\W]*]*/;
 
+const usernameConfig = () =>  { return Joi.string().required().min(3).max(18).regex(usernamePattern) };
+const nameConfig = () => { return Joi.string().min(2).max(20).required() };
+const emailConfig = () => { return Joi.string().min(5).email().required() };
+const passwordConfig = () => { return Joi.string().min(3).max(25).required().regex(passwordPattern) };
+const objectIdConfig = () => { return Joi.objectId() };
+const photoConfig = () => { return Joi.string().regex(imagePattern) };
+
 // create place
 const validateBodyCreatePlace = celebrate({
     body: Joi.object().keys({
-        cityId: Joi.objectId().required(),
+        cityId: photoConfig().required(),
         name: Joi.string().min(3).max(20).required(),
         description: Joi.string().max(300).required(),
         address: Joi.string().max(30).required(),
-        photo: Joi.string().regex(imagePattern).required(),
-        owner: Joi.objectId().required,
+        photo: photoConfig().required(),
+        owner: objectIdConfig().required,
     }),
 });
 // delete place
-const validateParamsDeletePlace = celebrate({
+const validateParamsPlaceId = celebrate({
     params: Joi.object().keys({
-        placeId: Joi.objectId(),
+        placeId: objectIdConfig(),
     }),
 });
 // валидация при регистрации
 const validateBodySignup = celebrate({
     body: Joi.object().keys({
-        username: Joi.string().required().min(3).max(18).regex(usernamePattern),
-        name: Joi.string().min(2).max(20).required(),
-        email: Joi.string().min(5).email().required(),
-        password: Joi.string().min(3).max(25).required().regex(passwordPattern),
+        username: usernameConfig(),
+        name: nameConfig(),
+        email: emailConfig(),
+        password: passwordConfig(),
     }),
 });
 // валидация при авторизации
 const validateBodySignin = celebrate({
     body: Joi.object().keys({
-        email: Joi.string().min(2).email().required(),
-        password: Joi.string().min(3).max(25).required(),
+        email: emailConfig(),
+        password: passwordConfig(),
     }),
 });
-// update info
-const validateBodyPatchInfo = celebrate({
+
+const validatePatchPhoto = celebrate({
     body: Joi.object().keys({
-        username: Joi.string().required().min(3).max(18).regex(usernamePattern),
-        name: Joi.string().min(2).max(20).required(),
-        email: Joi.string().min(5).email().required(),
-        photo: Joi.string().regex(imagePattern).required(),
+        photo: photoConfig(),
     }),
 });
+
+const validatePatchUsername = celebrate({
+    body: Joi.object().keys({
+        username: usernameConfig(),
+        name: nameConfig(),
+    }),
+});
+
+const validatePatchPassword = celebrate({
+    body: Joi.object().keys({
+        oldPassword: passwordConfig(),
+        newPassword: passwordConfig(),
+    }),
+});
+
+const validatePatchEmail = celebrate({
+    body: Joi.object().keys({
+        email: emailConfig(),
+    }),
+});
+
 // get info
 const validateParamsGetInfo = celebrate({
     params: Joi.object().keys({
-        userId: Joi.objectId(),
+        userId: objectIdConfig(),
     }),
 });
 
 // upload image
 const validateParamsUploadImage = celebrate({
     params: Joi.object().keys({
-        imgId: Joi.string().regex(imagePattern),
+        imgId: photoConfig(),
     }),
 })
 
@@ -66,8 +91,11 @@ module.exports = {
     validateBodySignup,
     validateBodySignin,
     validateBodyCreatePlace,
-    validateParamsDeletePlace,
+    validateParamsPlaceId,
     validateParamsGetInfo,
-    validateBodyPatchInfo,
-    validateParamsUploadImage
+    validateParamsUploadImage,
+    validatePatchPhoto,
+    validatePatchUsername,
+    validatePatchPassword,
+    validatePatchEmail
 }

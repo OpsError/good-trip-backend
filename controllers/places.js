@@ -59,8 +59,30 @@ const deletePlace = (req, res, next) => {
     .catch(next);
 }
 
+// поставить лайк
+const putLike = (req, res, next) => {
+    Place.findByIdAndUpdate(req.params.placeId, {
+        $addToSet: { likes: req.user._id },
+    }, { new: true })
+    .orFail(() => { throw new NotFound('Место не найдено') })
+    .then(place => res.status(200).send(place))
+    .catch(next);
+}
+
+// удалить лайк
+const deleteLike = (req, res, next) => {
+    Place.findByIdAndUpdate(req.params.placeId, {
+        $pull: { likes: req.user._id },
+    }, { new: true })
+    .orFail(() => { throw new NotFound('Место не найдено') })
+    .then(place => res.status(200).send(place))
+    .catch(next);
+}
+
 module.exports = {
     getPlaces,
     createPlace,
     deletePlace,
+    putLike,
+    deleteLike,
 }

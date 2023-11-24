@@ -1,17 +1,16 @@
 const router = require('express').Router();
 const auth = require('../middlewares/auth');
-const { updateInfo, getInfo } = require('../controllers/users');
-const { uploadImage } = require('../middlewares/upload');
-const { validateParamsGetInfo, validateBodyPatchInfo } = require('../middlewares/validate');
+const { getInfo } = require('../controllers/users');
+const { validateParamsGetInfo } = require('../middlewares/validate');
+const infoRouter = require('./userInfo');
+const faveRouter = require('./userFave');
 
-const userConfig = {
-    path: 'upload/users'
-}
+// обновление инфо
+router.use('/me', auth, infoRouter);
+// сохранить в избранное
+router.use('/fave', auth, faveRouter);
 
 // получение инфо
 router.get('/:userId', validateParamsGetInfo, getInfo);
-
-// обновление инфо
-router.patch('/me', auth, uploadImage(userConfig).single('photo'), validateBodyPatchInfo, updateInfo);
 
 module.exports = router;

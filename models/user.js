@@ -31,6 +31,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    saved: [{
+        type: mongoose.Schema.Types.ObjectId,
+        default: [],
+    }],
 });
 
 module.exports = mongoose.model('user', userSchema);
