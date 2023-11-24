@@ -5,11 +5,10 @@ const NotFound = require('../errors/not-found-err');
 const AccessError = require('../errors/access-err')
 const fs = require('fs');
 
-// получение всех мест
 const getPlaces = (req, res, next) => {
-    res.status(200).sendFile(req.params.imgId, {
-        root: './upload/places/'
-    });
+    Place.find({})
+    .then((places) => res.status(200).send({places}))
+    .catch(next);
 }
 
 // создание места
@@ -63,5 +62,5 @@ const deletePlace = (req, res, next) => {
 module.exports = {
     getPlaces,
     createPlace,
-    deletePlace
+    deletePlace,
 }

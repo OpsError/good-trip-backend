@@ -1,9 +1,8 @@
 const router = require('express').Router();
-const { getPlaces } = require('../controllers/places');
-const { getAvatar } = require('../controllers/users');
+const { getAvatar, getImagePlace } = require('../controllers/upload');
 const { validateParamsUploadImage } = require('../middlewares/validate')
 
-router.get('/places/:imgId', validateParamsUploadImage, getPlaces);
+router.get('/places/:imgId', validateParamsUploadImage, getImagePlace);
 
 router.get('/avatar/:imgId', validateParamsUploadImage, getAvatar);
 

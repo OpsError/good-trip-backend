@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { signup, signin } = require('../controllers/users');
+const { signup, signin } = require('../controllers/auth');
 const { validateBodySignup, validateBodySignin, } = require('../middlewares/validate');
 
 router.post('/signin', validateBodySignin, signin);
