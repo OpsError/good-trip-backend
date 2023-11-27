@@ -17,9 +17,11 @@ const placeConfig = {
 router.get('/', getPlaces);
 
 // создание карточки
-router.post('/', auth, uploadImage(placeConfig).single('photo'), validateBodyCreatePlace,createPlace);
+router.post('/', auth, uploadImage(placeConfig).single('photo'), validateBodyCreatePlace, createPlace);
 // удаление карточки
 router.delete('/:placeId', auth, validateParamsPlaceId, deletePlace);
+
+// лайки
 router.put('/likes/:placeId', auth, validateParamsPlaceId, putLike);
 router.delete('/likes/:placeId', auth, validateParamsPlaceId, deleteLike);
 

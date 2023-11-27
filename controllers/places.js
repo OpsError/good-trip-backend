@@ -35,7 +35,12 @@ const createPlace = (req, res, next) => {
             next(err);
         });
     })
-    .catch(next);
+    .catch((err) => {
+        fs.unlink(`./upload/places/${photo}`, (unlinkErr) => {
+            next(unlinkErr);
+        });
+        next(err);
+    });
 };
 
 // удаление

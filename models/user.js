@@ -35,6 +35,10 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         default: [],
     }],
+    admin: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 module.exports = mongoose.model('user', userSchema);

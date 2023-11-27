@@ -1,5 +1,4 @@
 const User = require('../models/user');
-// const InvalidData = require('../errors/invalid-data-err');
 const NotFound = require('../errors/not-found-err');
 const Duplicate = require('../errors/duplicate-err');
 const InvalidAuth = require('../errors/invalid-auth-err');
@@ -158,6 +157,7 @@ const getCurrentUser = (req, res, next) => {
         name: user.name,
         email: user.email,
         photo: user.photo,
+        admin: user.admin,
         _id: user._id
     }))
     .catch(next);
@@ -173,6 +173,7 @@ const getInfo = (req, res, next) => {
         name: user.name,
         email: user.email,
         photo: user.photo,
+        admin: user.admin,
         _id: user._id
     }))
     .catch(next);

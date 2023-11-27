@@ -16,12 +16,11 @@ const photoConfig = () => { return Joi.string().regex(imagePattern) };
 // create place
 const validateBodyCreatePlace = celebrate({
     body: Joi.object().keys({
-        cityId: photoConfig().required(),
+        cityId: objectIdConfig().required(),
         name: Joi.string().min(3).max(20).required(),
         description: Joi.string().max(300).required(),
         address: Joi.string().max(30).required(),
         photo: photoConfig().required(),
-        owner: objectIdConfig().required,
     }),
 });
 // delete place

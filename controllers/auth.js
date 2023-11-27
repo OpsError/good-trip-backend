@@ -53,6 +53,7 @@ const signin = (req, res, next) => {
             name: user.name,
             email: user.email,
             photo: user.photo,
+            admin: user.admin,
             _id: user._id
         });
     })
