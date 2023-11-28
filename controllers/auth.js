@@ -44,7 +44,7 @@ const signin = (req, res, next) => {
         }
         const token = jwt.sign({_id: user._id}, 'super-secret-key', {expiresIn: '14d'});
         res
-        .cookie('TOKEN', token, {
+        .cookie('REMEMBERME', token, {
             httpOnly: true,
         })
         .status(200)
@@ -60,7 +60,12 @@ const signin = (req, res, next) => {
     .catch(next);
 }
 
+const signout = (req, res, next) => {
+    res.status(200).clearCookie('REMEMBERME').send('Success');
+}
+
 module.exports = {
     signup,
     signin,
+    signout
 }
