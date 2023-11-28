@@ -92,7 +92,7 @@ const patchPassword = (req, res, next) => {
 
 // обновить email
 const patchEmail = (req, res, next) => {
-    const { email } = req.body.email;
+    const { email } = req.body;
     
     User.findByIdAndUpdate(req.user._id, { email: email }, {  returnDocument: 'after' })
     .orFail(() => { throw new  NotFound('Пользователь не найден')})
@@ -115,7 +115,7 @@ const patchEmail = (req, res, next) => {
 
 // сохранить в избранное
 const putFave = (req, res, next) => {
-    const { placeId } = req.params.placeId;
+    const placeId = req.params.placeId;
     User.findByIdAndUpdate(req.user._id, {
         $addToSet: { saved: placeId },
     }, { new: true })
@@ -133,7 +133,7 @@ const putFave = (req, res, next) => {
 
 // удалить из избранного
 const deleteFave = (req, res, next) => {
-    const { placeId } = req.params.placeId;
+    const placeId = req.params.placeId;
     User.findByIdAndUpdate(req.user._id, {
         $pull: { saved: placeId },
     }, { new: true })

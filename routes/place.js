@@ -7,7 +7,8 @@ const {
     putLike,
     deleteLike,
 } = require('../controllers/places');
-const { validateBodyCreatePlace, validateParamsPlaceId } = require('../middlewares/validate');
+const { validateParamsPlaceId } = require('../middlewares/validate');
+const validateCreatePlace = require('../middlewares/validatePlaceBody');
 const { uploadImage } = require('../middlewares/upload');
 
 const placeConfig = {
@@ -17,7 +18,7 @@ const placeConfig = {
 router.get('/', getPlaces);
 
 // создание карточки
-router.post('/', auth, uploadImage(placeConfig).single('photo'), validateBodyCreatePlace, createPlace);
+router.post('/', auth, uploadImage(placeConfig).single('photo'), validateCreatePlace, createPlace);
 // удаление карточки
 router.delete('/:placeId', auth, validateParamsPlaceId, deletePlace);
 

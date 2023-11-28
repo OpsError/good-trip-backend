@@ -7,7 +7,7 @@ const fs = require('fs');
 
 const getPlaces = (req, res, next) => {
     Place.find({})
-    .then((places) => res.status(200).send({places}))
+    .then((places) => res.status(200).send(places))
     .catch(next);
 }
 
@@ -32,15 +32,9 @@ const createPlace = (req, res, next) => {
             } else {
                 next(err);
             }
-            next(err);
         });
     })
-    .catch((err) => {
-        fs.unlink(`./upload/places/${photo}`, (unlinkErr) => {
-            next(unlinkErr);
-        });
-        next(err);
-    });
+    .catch(next);
 };
 
 // удаление

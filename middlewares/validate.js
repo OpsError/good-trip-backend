@@ -1,5 +1,6 @@
 const { celebrate, Joi } = require('celebrate');
 Joi.objectId = require('joi-objectid')(Joi);
+const fs = require('fs');
 
 // const urlPattern = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
 const usernamePattern = /[\w]*/;
@@ -14,15 +15,15 @@ const objectIdConfig = () => { return Joi.objectId() };
 const photoConfig = () => { return Joi.string().regex(imagePattern) };
 
 // create place
-const validateBodyCreatePlace = celebrate({
-    body: Joi.object().keys({
-        cityId: objectIdConfig().required(),
-        name: Joi.string().min(3).max(20).required(),
-        description: Joi.string().max(300).required(),
-        address: Joi.string().max(30).required(),
-        photo: photoConfig().required(),
-    }),
-});
+// const validateBodyCreatePlace = celebrate({
+//     body: Joi.object().keys({
+//         cityId: objectIdConfig().required(),
+//         name: Joi.string().min(3).max(20).required(),
+//         description: Joi.string().max(300).required(),
+//         address: Joi.string().max(30).required(),
+//         photo: photoConfig(),
+//     }),
+// });
 // delete place
 const validateParamsPlaceId = celebrate({
     params: Joi.object().keys({
@@ -84,17 +85,31 @@ const validateParamsUploadImage = celebrate({
     params: Joi.object().keys({
         imgId: photoConfig(),
     }),
-})
+});
+
+const validateCreateCity = celebrate({
+    body: Joi.object().keys({
+        name: nameConfig(),
+    }),
+});
+
+const validateSetAdmin = celebrate({
+    params: Joi.object().keys({
+        userId: objectIdConfig(),
+    }),
+});
 
 module.exports = {
     validateBodySignup,
     validateBodySignin,
-    validateBodyCreatePlace,
+    // validateBodyCreatePlace,
     validateParamsPlaceId,
     validateParamsGetInfo,
     validateParamsUploadImage,
     validatePatchPhoto,
     validatePatchUsername,
     validatePatchPassword,
-    validatePatchEmail
+    validatePatchEmail,
+    validateCreateCity,
+    validateSetAdmin,
 }
