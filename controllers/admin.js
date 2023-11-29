@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const Place = require('../models/place');
+const deleteSavedPlace = require('../utils/deleteSavedPlace');
 const NotFound = require('../errors/not-found-err');
 const AccessError = require('../errors/access-err');
 const fs = require('fs');
@@ -40,7 +41,7 @@ const deletePlaceForsed = (req, res, next) => {
         });
 
         Place.deleteOne({ _id: req.params.placeId })
-        .then(res.status(200).send({ message: 'Карточка удалена' }))
+        .then(() => deleteSavedPlace(req.params.placeId, res, next))
         .catch(next);
     })
     .catch(next);

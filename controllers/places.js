@@ -2,7 +2,8 @@ const Place = require('../models/place');
 const City = require('../models/city');
 const InvalidData = require('../errors/invalid-data-err');
 const NotFound = require('../errors/not-found-err');
-const AccessError = require('../errors/access-err')
+const AccessError = require('../errors/access-err');
+const deleteSavedPlace = require('../utils/deleteSavedPlace');
 const fs = require('fs');
 
 const getPlaces = (req, res, next) => {
@@ -39,7 +40,8 @@ const createPlace = (req, res, next) => {
 
 // удаление
 const deletePlace = (req, res, next) => {
-    Place.findById({ _id: req.params.placeId })
+    const placeId = req.params.placeId;
+    Place.findById({ _id: placeId })
     .orFail(() => { throw new NotFound('Карточка не найдена') })
     .then((place) => {
         if (!(place.owner.toString() === req.user._id)) {
@@ -52,7 +54,7 @@ const deletePlace = (req, res, next) => {
         });
 
         Place.deleteOne({ _id: req.params.placeId })
-        .then(res.status(200).send({ message: 'Карточка удалена' }))
+        .then(() => deleteSavedPlace(req.params.placeId, res, next))
         .catch(next);
     })
     .catch(next);

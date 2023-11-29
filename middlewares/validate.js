@@ -14,16 +14,6 @@ const passwordConfig = () => { return Joi.string().min(3).max(25).required().reg
 const objectIdConfig = () => { return Joi.objectId() };
 const photoConfig = () => { return Joi.string().regex(imagePattern) };
 
-// create place
-// const validateBodyCreatePlace = celebrate({
-//     body: Joi.object().keys({
-//         cityId: objectIdConfig().required(),
-//         name: Joi.string().min(3).max(20).required(),
-//         description: Joi.string().max(300).required(),
-//         address: Joi.string().max(30).required(),
-//         photo: photoConfig(),
-//     }),
-// });
 // delete place
 const validateParamsPlaceId = celebrate({
     params: Joi.object().keys({
@@ -99,6 +89,12 @@ const validateSetAdmin = celebrate({
     }),
 });
 
+const validateParamsDeleteCity = celebrate({
+    params: Joi.object().keys({
+        cityId: objectIdConfig().required()
+    }),
+});
+
 module.exports = {
     validateBodySignup,
     validateBodySignin,
@@ -112,4 +108,5 @@ module.exports = {
     validatePatchEmail,
     validateCreateCity,
     validateSetAdmin,
+    validateParamsDeleteCity
 }

@@ -1,4 +1,5 @@
 const City = require('../models/city');
+const NotFound = require('../errors/not-found-err');
 
 const getCities = (req, res, next) => {
     City.find({})
@@ -12,7 +13,15 @@ const createCity = (req, res, next) => {
     .catch(next);
 }
 
+const deleteCity = (req, res, next) => {
+    City.findByIdAndDelete(req.params.cityId)
+    .orFail(() => { throw new NotFound('Город не найден') })
+    .then(() => res.status(200).send('Success'))
+    .catch(next);
+}
+
 module.exports = {
     getCities,
-    createCity
+    createCity,
+    deleteCity
 }
